@@ -1,0 +1,31 @@
+Parameters:
+  ClientId:
+    Type: String
+  TopicName:
+    Type: String
+Resources:
+  RaspberryPiLamp:
+    Type: AWS::IoT::Thing
+  GnaSubscriberPolicy:
+    Type: AWS::IoT::Policy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Action: iot:Connect
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:client/${ClientId}
+          -
+            Effect: Allow
+            Action:
+              - iot:Subscribe
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/${TopicName}
+          -
+            Effect: Allow
+            Action:
+              - iot:Receive
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/${TopicName}
