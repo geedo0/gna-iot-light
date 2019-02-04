@@ -8,6 +8,8 @@ pip3 install -r requirements.txt
 ```
 
 ## Setup AWS resources
+
+### Raspberry Pi stack
 ```
 ClientId=RaspberryPi
 TopicName=lights/home
@@ -28,9 +30,23 @@ Once the stack is created, we need to manually create the device certificate.
 6. SCP these over to the Raspberry Pi
 7. Update the start.sh script
 
+### IoT Button
+1. Setup the IoT Dash button using the Android App. This will create the certificate and publish button clicks to the button's IoT topic.
+2. Remove whatever IoT rule you were forced to create in that process.
+3. Create the CloudFormation stack below
+```
+# This is the 16-digit Serial number underneath the button
+ButtonSerialNumber=DEADBEEFCAFEFACE
+TopicName=lights/home
+aws create-stack --stack-name iot-light-button --template-body file://cloudformation/iot-button.yml --parameters ParameterKey=ButtonSerialNumber,ParameterValue=$ButtonSerialNumber ParameterKey=TopicName,ParameterValue=$TopicName --capabilities CAPABILITY_IAM
+```
+
 ## Test
 ```
 sudo ./start.sh
+
+# Publish a message to the topic from the IoT console or by pressing the button
+# Observe the blinking lights
 ```
 
 ## Start it on boot
