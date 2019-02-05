@@ -3,10 +3,13 @@ Parameters:
     Type: String
   TopicName:
     Type: String
+  ButtonSerialNumber:
+    Type: String
 Resources:
+  # Raspberry Pi with a light attached to it
   RaspberryPiLamp:
     Type: AWS::IoT::Thing
-  GnaSubscriberPolicy:
+  LampSubscriberPolicy:
     Type: AWS::IoT::Policy
     Properties:
       PolicyDocument:
@@ -29,3 +32,45 @@ Resources:
               - iot:Receive
             Resource:
               Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/${TopicName}
+
+  # An IoT Button that can publish to the Pi's topic
+  MqttRepublishRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql:
+          Fn::Sub: SELECT * FROM 'iotbutton/${ButtonSerialNumber}'
+        Actions:
+          -
+            Republish:
+              RoleArn:
+                Fn::GetAtt:
+                  - MqttRepublishRole
+                  - Arn
+              Topic:
+                Ref: TopicName
+  MqttRepublishRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        -
+          PolicyName: iot-light-publisher
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action: iot:Publish
+                Resource:
+                  - Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/${TopicName}
