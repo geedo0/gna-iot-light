@@ -1,0 +1,43 @@
+body {
+  background-color: rgb(59, 79, 143);
+  font-family: sans-serif;
+
+  /* Centers the box */
+  position: relative;
+}
+
+.console {
+  background-color: #8695C6;
+  color: #25397A;
+
+  border: thick solid;
+  border-radius: 2%;
+
+  padding: 5%;
+  text-align: center;
+
+  /* Centers the box */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.blink-button {
+  background-color: inherit;
+  color: inherit;
+
+  border: medium solid;
+  border-radius: 100%;
+  box-shadow: 0 0.5em;
+
+  font-size: 1.5em;
+  outline: none;
+  padding: 10%;
+}
+
+/* Button press animation */
+.blink-button:active {
+  box-shadow: 0 0.2em;
+  transform: translateY(.3em);
+}
