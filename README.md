@@ -1,4 +1,4 @@
-# Setup
+# Setup the Raspberry Pi
 
 ## Python Dependencies
 ```
@@ -41,7 +41,7 @@ TopicName=lights/home
 aws create-stack --stack-name iot-light-button --template-body file://cloudformation/iot-button.yml --parameters ParameterKey=ButtonSerialNumber,ParameterValue=$ButtonSerialNumber ParameterKey=TopicName,ParameterValue=$TopicName --capabilities CAPABILITY_IAM
 ```
 
-## Test
+## Test 
 ```
 sudo ./start.sh
 
@@ -55,4 +55,18 @@ sudo vi /etc/rc.local
 
 # Add this snippet
 sudo /home/pi/iot-light/start.sh &
+```
+
+# Setup the web application
+
+## Setting up node
+```
+# Install the latest LTS version of node, not that junk on Ubuntu
+
+# Install our dependencies Express, AWS SDK... 
+cd express-app
+npm install
+
+# Update your IoT configuration (region, endpoint, topic)
+vi package.json
 ```

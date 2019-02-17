@@ -1,11 +1,9 @@
-function random(number) {
-  return Math.floor(Math.random()*(number+1));
-}
+function blink_handler(e) {
+  fetch('/blink', {method: 'POST'})
+    .catch(function(reason) {
+      console.log('Error blinking lights.');
+    });
+};
 
-function clickHandler(e) {
-  console = document.querySelector('.console');
-  console.style.backgroundColor = 'rgb(' + random(255) + ',' + random(255) + ',' + random(255) + ')';
-}
-
-var btn = document.querySelector(".blink-button");
-btn.addEventListener('click', clickHandler);
+var btn = document.querySelector('.blink-button');
+btn.addEventListener('click', blink_handler);

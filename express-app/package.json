@@ -2,11 +2,17 @@
   "name": "express-app",
   "version": "0.0.0",
   "private": true,
+  "config": {
+    "aws_region": "us-east-1",
+    "iot_endpoint": "redacted.iot.us-east-1.amazonaws.com",
+    "iot_topic": "redacted"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.404.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
