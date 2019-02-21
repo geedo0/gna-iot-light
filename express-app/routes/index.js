@@ -22,7 +22,7 @@ router.post('/blink', function(req, res, next) {
       res.sendStatus(500);
     } else {
       console.log('Lights are blinking');
-      res.redirect('/');
+      res.sendStatus(200);
     }
   });
 });

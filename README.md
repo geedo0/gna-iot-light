@@ -70,3 +70,11 @@ npm install
 # Update your IoT configuration (region, endpoint, topic)
 vi package.json
 ```
+
+## Run the server
+```
+npm run devstart
+```
+
+## Test the server
+Go to the page [here](http://localhost:3000) and click the button.
