@@ -1,12 +1,20 @@
 # Setup the Frontend Static Host with S3 and CloudFront
+There are some boiler plate resources we need to setup before CloudFormation can form our cloud.
 
 ## Upload the web assets
-Let's get the frontend assets into S3.
+Let's get the frontend assets into S3. Part of this requires us to make a bucket to store them in
 
 ```
 aws s3 mb assets-bucket
 aws s3 sync express-app/public s3:/<bucket-name>
 ```
+
+## Create Route 53 and ACM infrastructure
+1. Carve out a DNS name in Route 53 from the console by creating a Route 53 Hosted Zone.
+2. Request an ACM certificate for that DNS name. This will be the certificate used by CloudFront.
+3. Validate with DNS and create the record.
+4. Cleanup the record when you get the certificate.
+5. **LATER** once you create the cloudformation stack with the cloudfront distribution. You'll need to go back to Route53 and create the alias target to that distribution.
 
 # Setup the Raspberry Pi
 
