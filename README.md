@@ -1,3 +1,13 @@
+# Setup the Frontend Static Host with S3 and CloudFront
+
+## Upload the web assets
+Let's get the frontend assets into S3.
+
+```
+aws s3 mb assets-bucket
+aws s3 sync express-app/public s3:/<bucket-name>
+```
+
 # Setup the Raspberry Pi
 
 ## Python Dependencies
@@ -13,7 +23,8 @@ pip3 install -r requirements.txt
 ```
 ClientId=RaspberryPi
 TopicName=lights/home
-aws cloudformation create-stack --stack-name iot-light --template-body file://cloudformation/iot-light-stack.yml --parameters ParameterKey=ClientId,ParameterValue=$ClientId ParameterKey=TopicName,ParameterValue=$TopicName
+FrontEndBucket=assets-bucket
+aws cloudformation create-stack --stack-name iot-light --template-body file://cloudformation/iot-light-stack.yml --parameters ParameterKey=ClientId,ParameterValue=$ClientId ParameterKey=TopicName,ParameterValue=$TopicName ParameterKey=FrontEndBucket,ParameterValue=$FrontEndBucket
 
 # Take note of your IOT endpoint
 aws iot describe-endpoint
@@ -57,7 +68,7 @@ sudo vi /etc/rc.local
 sudo /home/pi/iot-light/start.sh &
 ```
 
-# Setup the web application
+# Setup the Node/Express application
 
 ## Setting up node
 ```

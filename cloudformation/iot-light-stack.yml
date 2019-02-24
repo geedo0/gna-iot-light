@@ -5,6 +5,8 @@ Parameters:
     Type: String
   ButtonSerialNumber:
     Type: String
+  FrontEndBucket:
+    Type: String
 Resources:
   # Raspberry Pi with a light attached to it
   RaspberryPiLamp:
@@ -74,3 +76,49 @@ Resources:
                 Action: iot:Publish
                 Resource:
                   - Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/${TopicName}
+  FrontEndDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: iot-assets
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+        Origins:
+          -
+            DomainName:
+              Fn::Sub: ${FrontEndBucket}.s3.amazonaws.com
+            Id: iot-assets
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Sub: origin-access-identity/cloudfront/${FrontEndAccessIdentity}
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+  FrontEndAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Access to frontend assets.
+  FrontEndBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: { Ref: FrontEndBucket }
+      PolicyDocument:
+        Version: '2008-10-17'
+        Id: FrontEndBucketPolicy
+        Statement:
+          -
+            Sid: 1
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - FrontEndAccessIdentity
+                  - S3CanonicalUserId
+            Action: s3:GetObject
+            Resource:
+              Fn::Sub: arn:aws:s3:::${FrontEndBucket}/*
