@@ -2,10 +2,13 @@
 There are some boiler plate resources we need to setup before CloudFormation can form our cloud.
 
 ## Upload the web assets
-Let's get the frontend assets into S3. Part of this requires us to make a bucket to store them in
+Let's get the frontend assets into S3. Part of this requires us to make a bucket to store them in.
 
 ```
 aws s3 mb assets-bucket
+
+# Update the client side javascript to point to your expected endpoint
+
 aws s3 sync express-app/public s3:/<bucket-name>
 ```
 
@@ -14,6 +17,7 @@ aws s3 sync express-app/public s3:/<bucket-name>
 2. Request an ACM certificate for that DNS name. This will be the certificate used by CloudFront.
 3. Validate with DNS and create the record.
 4. Cleanup the record when you get the certificate.
+5. Similarly, perform the above for our API endpoint.
 5. **LATER** once you create the cloudformation stack with the cloudfront distribution. You'll need to go back to Route53 and create the alias target to that distribution.
 
 # Setup the Raspberry Pi
@@ -97,3 +101,21 @@ npm run devstart
 
 ## Test the server
 Go to the page [here](http://localhost:3000) and click the button.
+
+# Setup the SAM Application
+SAM isn't quite as polished so there's some monkey patching to get this working. At the end of this you'll have an API Gateway that will fire off a lambda to blink lights
+
+```
+cd sam-app
+
+# Build the Lambda package, upload it to S3, and generate a cloudformation template
+sam package --template-file template.yaml --s3-bucket <bucket name> --output-template-file package.yml
+
+# Deploy the SAM App's cloudformation
+sam deploy --template-file package.yml --stack-name sam-app --capabilities CAPABILITY_IAM
+
+# Patch the stack to get our updated parameters
+aws cloudformation update-stack --stack-name sam-app --use-previous-template --capabilities CAPABILITY_IAM --parameters ParameterKey=TopicName,ParameterValue=some/topic
+```
+
+After that stack finishes creating, we have to pop over to the API Gateway console and create a Custom Domain Name mapping. Pass in the API DNS name and the ACM certificate. Create a base path mapping to the Prod stage. The ACM certificate thing takes a long time to initialize.

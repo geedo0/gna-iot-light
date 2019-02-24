@@ -1,5 +1,7 @@
+var endpoint_url = 'https://bomb.com';
+
 function blink_handler(e) {
-  fetch('/blink', {method: 'POST'})
+  fetch(endpoint_url + '/blink', {method: 'POST'})
     .catch(function(reason) {
       console.log('Error blinking lights.');
     });

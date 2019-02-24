@@ -24,13 +24,6 @@ Resources:
             Action: iot:Publish
             Resource:
               - Fn::Sub: arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/${TopicName}
-          -
-            Effect: Allow
-            Action:
-              - logs:CreateLogGroup
-              - logs:CreateLogStream
-              - logs:PutLogEvents
-            Resource: '*'
       Events:
         Blink:
           Type: Api
