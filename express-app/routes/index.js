@@ -8,10 +8,6 @@ var iot = new IoTData({
   endpoint: process.env.npm_package_config_iot_endpoint
 });
 
-router.get('/', function(req, res, next) {
-  res.render('index');
-});
-
 router.post('/blink', function(req, res, next) {
   var options = {
     topic: process.env.npm_package_config_iot_topic
