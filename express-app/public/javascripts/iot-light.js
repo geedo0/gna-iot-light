@@ -4,6 +4,7 @@ function blink_handler(e) {
   fetch(endpoint_url + '/blink', {method: 'POST'})
     .catch(function(reason) {
       console.log('Error blinking lights.');
+      console.log(reason);
     });
 };
 

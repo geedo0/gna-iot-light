@@ -12,7 +12,12 @@ def lambda_handler(event, context):
   print(response)
   if response['ResponseMetadata']['HTTPStatusCode'] == 200:
     print('HTTP 200: Success')
-    return {'statusCode': 200}
+    return {
+      'statusCode': 200,
+      'headers': {
+        'Access-Control-Allow-Origin': '*'
+      }
+    }
   else:
     print('Failed response.')
     return {'statusCode': 500}
